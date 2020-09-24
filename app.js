@@ -5,7 +5,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const socket = require("socket.io")();
+const io = require("socket.io")();
 
 const indexRouter = require("./routes/index");
 
@@ -24,9 +24,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 
 // send a message on successful socket connection
-socket.on('connection', function(){
+io.on('connection', function(socket){
   socket.emit('message', 'Successfully connected.');
+  //test if client receive data
+  socket.on('message received', function(data){
+    console.log('Client is saying:' + data)
+  })
 });
+
 
 
 // catch 404 and forward to error handler
@@ -45,4 +50,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = { app, socket };
+module.exports = { app, io };
