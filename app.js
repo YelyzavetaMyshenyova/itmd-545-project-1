@@ -9,12 +9,24 @@ const io = require("socket.io")();
 
 //Add fs module
 const fs = require("fs");
-var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
+
+//Add diff module
 const diff = require("diff");
 
+//Add EventEmitter class
+const {EventEmitter} = require('events');
+
+//
 const indexRouter = require("./routes/index");
 
 const app = express();
+
+var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
+var fileEvent = new EventEmitter();
+
+fileEvent.on('changed file', function(){
+  console.log('The file was changed and fired an event.');
+});
 
 //Diff testing locally
 fs.watch('./var/file.txt', function(eventType, filename){
@@ -26,6 +38,8 @@ fs.watch('./var/file.txt', function(eventType, filename){
     var new_file = data;
     if (new_file !== old_file) {
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
+      fileEvent.emit('changed file');
+      /*
       var file_changes = diff.diffLines(old_file, new_file);
       console.log(`Here are the changes (promise!):`);
       file_changes.forEach((change, i) => {
@@ -36,7 +50,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
           console.log(`Removed: ${change.value}`);
         }
       });
-
+      */
     }
     old_file = new_file
   });
