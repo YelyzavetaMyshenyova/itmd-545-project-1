@@ -24,8 +24,8 @@ const app = express();
 var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 var fileEvent = new EventEmitter();
 
-fileEvent.on('changed file', function(){
-  console.log('The file was changed and fired an event.');
+fileEvent.on('changed file', function(data){
+  console.log(`The file was changed and fired an event. This are the changes:\n${data}`);
 });
 
 //Diff testing locally
@@ -36,21 +36,22 @@ fs.watch('./var/file.txt', function(eventType, filename){
     //console.log(data); This logs the data without string format.
     //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
     var new_file = data;
-    if (new_file !== old_file) {
+    if (new_file !== old_file)
+    {
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
-      fileEvent.emit('changed file');
-      /*
+
+
       var file_changes = diff.diffLines(old_file, new_file);
-      console.log(`Here are the changes (promise!):`);
-      file_changes.forEach((change, i) => {
+      //console.log(`Here are the changes (promise!):`);
+      var new_changes = file_changes.map((change, i) => {
         if (change.added){
-          console.log(`Added: ${change.value}`);
+          return `Added: ${change.value}\n`;
         }
         if (change.removed){
-          console.log(`Removed: ${change.value}`);
+          return`Removed: ${change.value}\n`;
         }
       });
-      */
+      fileEvent.emit('changed file', new_changes.join(''));
     }
     old_file = new_file
   });
