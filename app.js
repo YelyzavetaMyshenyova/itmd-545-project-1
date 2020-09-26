@@ -9,20 +9,25 @@ const io = require("socket.io")();
 
 //Add fs module
 const fs = require("fs")
+var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 
 const indexRouter = require("./routes/index");
 
 const app = express();
 
 //Diff testing locally
-fs.watch('var/file.txt', function(eventType, filename){
-  fs.readFile(`./var/${filename}`, function(err, data){
-    console.log(`The file has this content:\n\n${data}`);
+fs.watch('./var/file.txt', function(eventType, filename){
+  fs.readFile(`./var/${filename}`,{encoding:"utf8"}, function(err, data){
+    //console.log(`The file has this content:\n\n${data}`);
     //console.log(data); This logs the data without string format.
     //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
-    
+    var new_file = data;
+    if (new_file !== old_file) {
+      console.log(`${filename} has changed. It was a ${eventType} event.`);
+    }
+    old_file = new_file
   });
-  console.log(`${filename} has changed. It was a ${eventType} event.`);
+
 });
 
 // view engine setup
