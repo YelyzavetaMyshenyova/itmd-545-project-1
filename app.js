@@ -7,9 +7,17 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const io = require("socket.io")();
 
+//Add fs module
+const fs = require("fs")
+
 const indexRouter = require("./routes/index");
 
 const app = express();
+
+//Diff testing locally
+fs.watch('var/file.txt', function(eventType, filename){
+  console.log(`${filename} has changed. It was a ${eventType} event.`);
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
