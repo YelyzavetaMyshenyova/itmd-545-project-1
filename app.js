@@ -23,7 +23,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
     //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
     var new_file = data;
     if (new_file !== old_file) {
-      console.log(`${filename} has changed. It was a ${eventType} event.`);
+      console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
     }
     old_file = new_file
   });
