@@ -1,0 +1,36 @@
+body {
+ background-image: url("background.jpg");
+color: Black;
+}
+
+.box{
+  margin: auto;
+  padding: 2%;
+  margin-top: 2%;
+width: 75%;
+background-color: white;
+
+}
+
+.boxtwo{
+  margin: auto;
+  padding: 2%;
+  margin-top: 4%;
+width: 75%;
+background-color: white;
+
+}
+
+.remove{
+  color:red;
+}
+
+.add{
+color:green;
+
+}
+
+.stamp{
+  margin-top: 4%;
+  font-weight: bold;
+}
