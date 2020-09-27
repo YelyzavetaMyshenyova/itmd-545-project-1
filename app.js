@@ -79,7 +79,7 @@ io.on('connection', function(socket){
 
 //when `changed file` event fires, send changes to browser
 fileEvent.on(`changed file`, function(data){
-  io.emit('message', data);
+  io.emit('diffed changes', data);
 });
 
 
