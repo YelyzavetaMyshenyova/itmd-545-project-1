@@ -38,10 +38,10 @@ fs.watch('./var/file.txt', function(eventType, filename){
       //console.log(`Here are the changes (promise!):`);
       var new_changes = file_changes.map((change, i) => {
         if (change.added){
-          return `Added: ${change.value}`;
+          return `<li class="ins">${change.value}</li>`;
         }
         if (change.removed){
-          return`Removed: ${change.value}`;
+          return `<li class="del">${change.value}</li>`;
         }
       });
       fileEvent.emit('changed file', new_changes.join('\n'));
