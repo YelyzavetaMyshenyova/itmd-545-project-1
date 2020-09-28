@@ -22,20 +22,21 @@ var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 var fileEvent = new EventEmitter();
 
 //requesting html from the webpage
-axios.get('https://graphics.suntimes.com/homicides/')
+axios.get('https://www.weather.gov/ilx/maxtemp')
   .then((res) => {
     if (res.status === 200){
       const html = res.data;
       //load html into cheerio
       const $ = cheerio.load(html);
-      const output = $('#person30').find('h2').text();
-      console.log('show output: ',output);
+      //loading weather infomation
+      const weatherInfo = $('pre');
+      const output = weatherInfo.html();
+      console.log(output);
     }
   })
   .catch((error) => {
     console.log('Fail to fetch', error);
   })
-
 
 //Diff testing locally
 fs.watch('./var/file.txt', function(eventType, filename){
