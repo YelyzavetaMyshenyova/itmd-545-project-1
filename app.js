@@ -12,13 +12,29 @@ const fs = require("fs");
 const diff = require("diff");
 //Add EventEmitter class
 const {EventEmitter} = require('events');
-//
+const axios = require('axios');
+const cheerio = require('cheerio');
+
 const indexRouter = require("./routes/index");
 const app = express();
 
 var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 var fileEvent = new EventEmitter();
 
+//requesting html from the webpage
+axios.get('https://graphics.suntimes.com/homicides/')
+  .then((res) => {
+    if (res.status === 200){
+      const html = res.data;
+      //load html into cheerio
+      const $ = cheerio.load(html);
+      const output = $('#person30').find('h2').text();
+      console.log('show output: ',output);
+    }
+  })
+  .catch((error) => {
+    console.log('Fail to fetch', error);
+  })
 
 
 //Diff testing locally
