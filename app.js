@@ -89,7 +89,6 @@ fileEvent.on('changed file', function(data){
   console.log(`The file was changed and fired an event. This are the changes:\n${data}`);
 });
 
-// view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
