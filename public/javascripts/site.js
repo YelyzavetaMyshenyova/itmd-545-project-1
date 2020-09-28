@@ -11,5 +11,10 @@ socket.on("message", function (data) {
 
 socket.on("diffed changes", function(data) {
   console.log(`This are the diffed changes: ${data}`);
-  changes.innerHTML += data;
+  var parent_li = document.createElement('li');
+  parent_li.innerText = 'Latest changes:';
+  var nested_ul = document.createElement('ul');
+  nested_ul.innerHTML += data;
+  parent_li.append(nested_ul);
+  changes.append(parent_li);
 });
