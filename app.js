@@ -12,12 +12,31 @@ const fs = require("fs");
 const diff = require("diff");
 //Add EventEmitter class
 const {EventEmitter} = require('events');
-//
+
+const axios = require('axios');
+const cheerio = require('cheerio');
+
 const indexRouter = require("./routes/index");
 const app = express();
 
 var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 var fileEvent = new EventEmitter();
+
+
+//requesting html from the webpage
+axios.get('https://graphics.suntimes.com/homicides/')
+  .then((res) => {
+    if (res.status === 200){
+      const html = res.data;
+      //load html into cheerio
+      const $ = cheerio.load(html);
+      const output = $('#person30').find('h2').text();
+      console.log('show output: ',output);
+    }
+  })
+  .catch((error) => {
+    console.log('Fail to fetch', error);
+  })
 
 //Diff testing locally
 fs.watch('./var/file.txt', function(eventType, filename){
@@ -29,6 +48,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
     var new_file = data;
     if (new_file !== old_file)
     {
+
 
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
 
@@ -68,6 +88,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
 
   } // end of if Notification...
 */
+      
       var file_changes = diff.diffLines(old_file, new_file);
       //console.log(`Here are the changes (promise!):`);
       var new_changes = file_changes.map((change, i) => {
@@ -89,6 +110,8 @@ fileEvent.on('changed file', function(data){
   console.log(`The file was changed and fired an event. This are the changes:\n${data}`);
 });
 
+
+// view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
