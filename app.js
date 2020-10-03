@@ -59,7 +59,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
         public: 'BNgI02ayhUa95ZmCC5Wk3wqH8wrFXWdJUu57qRvcjB9eicn2rwlmaegJtk3O7X5uP_lS9OZhNtEQ',
         private: 'iid1KzWa6rmT1YPdEi9LIi3KeZxT326r8FIBzDRGa7c',
     };
-    webpush.setVapidDetails(
+    webPush.setVapidDetails(
         'mailto:lizamyshenyova@gmail.com',
         vapid_keys.public,
         vapid_keys.private
@@ -72,7 +72,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
               subscription = JSON.parse(subscription);
               console.log('Subscription to send to:', subscription);
               console.log('Message to send:', new_file);
-              webpush.sendNotification(subscription, new_file)
+              webPush.sendNotification(subscription, new_file)
          .catch(function(error) {
               console.error('sendNotification error: ', error, subscription, new_file);
           });
@@ -159,7 +159,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/subscription",)
+app.use("/subscription", subscriptionRouter)
 
 // send a message on successful socket connection
 io.on('connection', function(socket){
