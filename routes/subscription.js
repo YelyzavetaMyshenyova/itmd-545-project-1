@@ -17,7 +17,7 @@ router.post('/', function(req, res, next) {
 });
 
 router.get('/public-key/', function(req, res, next) {
-  res.json({vapid_public_key: 'BNgI02ayhUa95ZmCC5Wk3wqH8wrFXWdJUu57qRvcjB9eicn2rwlmaegJtk3O7X5uP_lS9OZhNtEQ'});
+  res.json({vapid_public_key: 'BMJ9IpyHYOZIPP4fkxbmu_rd3CD95Bw_ehAJc8KSyvR04QWU78xHOw9A0e07OYwPA4bO2SjF_BT0Z1xYViLSZbI'});
 });
 
 module.exports = router

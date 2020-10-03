@@ -22,6 +22,7 @@ const webPush = require('web-push')
 
 const app = express();
 
+
 var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 var fileEvent = new EventEmitter();
 
@@ -56,26 +57,30 @@ fs.watch('./var/file.txt', function(eventType, filename){
     //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
     var new_file = data;
     const vapid_keys = {
-        public: 'BNgI02ayhUa95ZmCC5Wk3wqH8wrFXWdJUu57qRvcjB9eicn2rwlmaegJtk3O7X5uP_lS9OZhNtEQ',
-        private: 'iid1KzWa6rmT1YPdEi9LIi3KeZxT326r8FIBzDRGa7c',
+        public: 'BMJ9IpyHYOZIPP4fkxbmu_rd3CD95Bw_ehAJc8KSyvR04QWU78xHOw9A0e07OYwPA4bO2SjF_BT0Z1xYViLSZbI',
+        private: 'uhONt3RMY8ooDWp1vZ15_aWojSCcbumeJ27FaTx5tlM',
     };
     webPush.setVapidDetails(
         'mailto:lizamyshenyova@gmail.com',
         vapid_keys.public,
         vapid_keys.private
     );
-    fs.promises.readFile(`var/subscriptions.json`, {encoding:"utf8"})
+
+    fs.promises.readFile(`var/subscription.json`, {encoding:"utf8"})
         .then(function(subs) {
-          let subscriptions = subs.split('\n');
-          subscriptions.map(function(subscription) {
+          let subscription = subs.split('\n');
+          subscription.map(function(subscription) {
             if (subscription.length > 5) {
               subscription = JSON.parse(subscription);
               console.log('Subscription to send to:', subscription);
               console.log('Message to send:', new_file);
-              webPush.sendNotification(subscription, new_file)
-         .catch(function(error) {
-              console.error('sendNotification error: ', error, subscription, new_file);
-          });
+    
+                webPush.sendNotification(subscription, 'The weather report has changed')
+           .catch(function(error) {
+                console.error('sendNotification error: ', error, subscription, new_file);
+            });
+
+
         }
       });
     })
@@ -86,6 +91,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
 
     if (new_file !== old_file)
     {
+          console.log("Here?");
 
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
 
@@ -139,6 +145,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
       fileEvent.emit('changed file', new_changes.join('\n'));
     }
     old_file = new_file
+
   });
 });
 

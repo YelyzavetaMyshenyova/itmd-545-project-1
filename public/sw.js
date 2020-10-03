@@ -18,7 +18,7 @@ addEventListener('install', function(e) {
   // tabs must be closed). This has the effect of immediately firing the
   // 'activated' event, listened for below
   //
-  self.skipWaiting();
+  //self.skipWaiting();
   //
   e.waitUntil(
     caches.open(site_cache)
