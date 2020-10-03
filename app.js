@@ -17,6 +17,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 const indexRouter = require("./routes/index");
+const subscriptionRouter = require('./routes/subscription');
+const webPush = require('web-push')
+
 const app = express();
 
 var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
@@ -52,6 +55,35 @@ fs.watch('./var/file.txt', function(eventType, filename){
     //console.log(data); This logs the data without string format.
     //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
     var new_file = data;
+    const vapid_keys = {
+        public: 'BNgI02ayhUa95ZmCC5Wk3wqH8wrFXWdJUu57qRvcjB9eicn2rwlmaegJtk3O7X5uP_lS9OZhNtEQ',
+        private: 'iid1KzWa6rmT1YPdEi9LIi3KeZxT326r8FIBzDRGa7c',
+    };
+    webpush.setVapidDetails(
+        'mailto:lizamyshenyova@gmail.com',
+        vapid_keys.public,
+        vapid_keys.private
+    );
+    fs.promises.readFile(`var/subscriptions.json`, {encoding:"utf8"})
+        .then(function(subs) {
+          let subscriptions = subs.split('\n');
+          subscriptions.map(function(subscription) {
+            if (subscription.length > 5) {
+              subscription = JSON.parse(subscription);
+              console.log('Subscription to send to:', subscription);
+              console.log('Message to send:', new_file);
+              webpush.sendNotification(subscription, new_file)
+         .catch(function(error) {
+              console.error('sendNotification error: ', error, subscription, new_file);
+          });
+        }
+      });
+    })
+    .catch(function(error) {
+         console.error('Error: ', error);
+    });
+
+
     if (new_file !== old_file)
     {
 
@@ -127,6 +159,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
+app.use("/subscription",)
 
 // send a message on successful socket connection
 io.on('connection', function(socket){
