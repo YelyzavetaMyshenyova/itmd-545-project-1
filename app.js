@@ -74,7 +74,7 @@ fs.watch('./var/file.txt', function(eventType, filename){
               subscription = JSON.parse(subscription);
               console.log('Subscription to send to:', subscription);
               console.log('Message to send:', new_file);
-    
+
                 webPush.sendNotification(subscription, 'The weather report has changed')
            .catch(function(error) {
                 console.error('sendNotification error: ', error, subscription, new_file);
@@ -94,43 +94,6 @@ fs.watch('./var/file.txt', function(eventType, filename){
           console.log("Here?");
 
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
-
-/*
-
-  if ('Notification' in window) {
-    console.log('This browser supports notifications!');
-    var notify_me_button = document.createElement('button');
-    notify_me_button.id = "notify-me";
-    notify_me_button.innerText = 'Send me Notifications';
-    notify_me_button.addEventListener('click', function(event) {
-      Notification.requestPermission()
-        .then(function(permission) {
-          console.log('Permission: ', permission)
-        })
-        .catch(function(error) {
-          console.error('Permission error:', error);
-        });
-    });
-
-    document.querySelector('body').append(notify_me_button);
-
-    if(Notification.permission == 'granted') {
-      console.log('Permission granted for notifications');
-      var test_notify_button = document.createElement('button');
-      test_notify_button.id = "test-notify";
-      test_notify_button.innerText = 'Send Test Notification';
-      test_notify_button.addEventListener('click', function(event) {
-        var notification = new Notification('Hello! This is a notification!');
-        notification.addEventListener('click', function(event) {
-          notification.close();
-        });
-      });
-      document.querySelector('body').append(test_notify_button);
-    }
-
-
-  } // end of if Notification...
-*/
 
       var file_changes = diff.diffLines(old_file, new_file);
       //console.log(`Here are the changes (promise!):`);
