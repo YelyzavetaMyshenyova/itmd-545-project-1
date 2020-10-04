@@ -110,12 +110,6 @@ fs.watch('./var/file.txt', function(eventType, filename){
   });
 });
 
-//When the `changed file` event fires, log changes locally
-fileEvent.on('changed file', function(data){
-  console.log(`The file was changed and fired an event. This are the changes:\n${data}`);
-});
-
-
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -135,13 +129,13 @@ io.on('connection', function(socket){
   socket.on('message received', function(data){
     console.log('Client is saying:' + data)
   })
-
+  //when `changed file` event fires, send changes to browser
+  fileEvent.on('changed file', function(data){
+    socket.emit('diffed changes', data);
+  });
 });
 
-//when `changed file` event fires, send changes to browser
-fileEvent.on(`changed file`, function(data){
-  io.emit('diffed changes', data);
-});
+
 
 
 // catch 404 and forward to error handler
