@@ -136,7 +136,14 @@ io.on('connection', function(socket){
   fileEvent.on('changed file', function(data){
     socket.emit('diffed changes', data);
   });
+
+  //request weather data initially
   requestData();
+
+  //rRequest weather data every 10 minutes
+  var scheduleTask = schedule.scheduleJob('*/10 * * * *', function(){
+    requestData();
+  });
 });
 
 
