@@ -89,6 +89,30 @@ fs.watch('./var/file.txt', function(eventType, filename){
   });
 });
 
+//a function that handles axios request for weather data
+function requestData() {
+  //requesting html from the webpage
+  axios.get('https://www.weather.gov/ilx/maxtemp')
+    .then((res) => {
+      if (res.status === 200){
+        const html = res.data;
+        //load html into cheerio
+        const $ = cheerio.load(html);
+        //loading weather infomation
+        const weatherInfo = $('pre');
+        const output = weatherInfo.html();
+        //console.log(output);
+        fs.writeFile('./var/file.txt', output, error => {
+          //In case of error throw err exception
+          if (error) throw err;
+        });
+      }
+    })
+    .catch((error) => {
+      console.log('Fail to fetch', error);
+    })
+}
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -112,27 +136,7 @@ io.on('connection', function(socket){
   fileEvent.on('changed file', function(data){
     socket.emit('diffed changes', data);
   });
-
-  //requesting html from the webpage
-  axios.get('https://www.weather.gov/ilx/maxtemp')
-    .then((res) => {
-      if (res.status === 200){
-        const html = res.data;
-        //load html into cheerio
-        const $ = cheerio.load(html);
-        //loading weather infomation
-        const weatherInfo = $('pre');
-        const output = weatherInfo.html();
-        //console.log(output);
-        fs.writeFile('./var/file.txt', output, error => {
-          //In case of error throw err exception
-          if (error) throw err;
-        });
-      }
-    })
-    .catch((error) => {
-      console.log('Fail to fetch', error);
-    })
+  requestData();
 });
 
 
