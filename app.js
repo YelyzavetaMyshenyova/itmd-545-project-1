@@ -54,7 +54,32 @@ function requestData() {
         //loading weather infomation
         const weatherInfo = $('pre');
         const output = weatherInfo.html();
-        //console.log(output);
+        //parsing html data
+        var lines = output.split("\n").filter(line => line.length > 2);
+        var json = {};
+        var state = "";
+        json['title'] = lines.slice(0, 3).join(" ");
+        json['data'] = {};
+        lines.slice(3).forEach(line => {
+          var arr = line.split(" ").filter(word => word != '');
+          if(isNaN(arr[arr.length-1])) {
+            //state
+            state = arr.join(" ");
+            json['data'][state] = {};
+            console.log(json['data']);
+          } else {
+            //location
+            var location = arr.slice(0,arr.length-1).join(" ");
+            json['data'][state][location] = arr[arr.length-1];
+          }
+        });
+        //convert object to a json string
+        console.log("Testing here:");
+        var weatherData = JSON.stringify(json);
+        fs.writeFile('weatherData.json', weatherData, (error) => {
+            if (error) throw err;
+            console.log('Data written to json file');
+        });
         fs.writeFile('./var/file.txt', output, error => {
           //In case of error throw err exception
           if (error) throw err;
