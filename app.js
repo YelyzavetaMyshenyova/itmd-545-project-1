@@ -6,13 +6,9 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const io = require("socket.io")();
-//Add fs module
 const fs = require("fs");
-//Add diff module
 const diff = require("diff");
-//Add EventEmitter class
 const {EventEmitter} = require('events');
-
 const axios = require('axios');
 const cheerio = require('cheerio');
 const schedule = require('node-schedule');
@@ -27,54 +23,11 @@ var fileEvent = new EventEmitter();
 fs.watch('./var/file.txt', function(eventType, filename){
   fs.promises.readFile(`./var/${filename}`,{encoding:"utf8"})
   .then(function(data) {
-    //console.log(`The file has this content:\n\n${data}`);
-    //console.log(data); This logs the data without string format.
-    //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
     var new_file = data;
     if (new_file !== old_file)
     {
-
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
-
-/*
-
-  if ('Notification' in window) {
-    console.log('This browser supports notifications!');
-    var notify_me_button = document.createElement('button');
-    notify_me_button.id = "notify-me";
-    notify_me_button.innerText = 'Send me Notifications';
-    notify_me_button.addEventListener('click', function(event) {
-      Notification.requestPermission()
-        .then(function(permission) {
-          console.log('Permission: ', permission)
-        })
-        .catch(function(error) {
-          console.error('Permission error:', error);
-        });
-    });
-
-    document.querySelector('body').append(notify_me_button);
-
-    if(Notification.permission == 'granted') {
-      console.log('Permission granted for notifications');
-      var test_notify_button = document.createElement('button');
-      test_notify_button.id = "test-notify";
-      test_notify_button.innerText = 'Send Test Notification';
-      test_notify_button.addEventListener('click', function(event) {
-        var notification = new Notification('Hello! This is a notification!');
-        notification.addEventListener('click', function(event) {
-          notification.close();
-        });
-      });
-      document.querySelector('body').append(test_notify_button);
-    }
-
-
-  } // end of if Notification...
-*/
-
       var file_changes = diff.diffLines(old_file, new_file);
-      //console.log(`Here are the changes (promise!):`);
       var new_changes = file_changes.map((change, i) => {
         if (change.added){
           return `<li class="ins">${change.value}</li>`;
