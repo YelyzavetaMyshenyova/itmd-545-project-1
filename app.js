@@ -76,7 +76,7 @@ function requestData() {
         //convert object to a json string
         console.log("Testing here:");
         var weatherData = JSON.stringify(json);
-        fs.writeFile('weatherData.json', weatherData, (error) => {
+        fs.writeFile('./var/weatherData.json', weatherData, (error) => {
             if (error) throw err;
             console.log('Data written to json file');
         });
