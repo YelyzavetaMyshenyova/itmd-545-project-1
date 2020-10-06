@@ -1,7 +1,9 @@
 
 24 HOUR MAXIMUM TEMPERATURE DATA IN DEGREES FAHRENHEIT,
 FOR ILLINOIS AND THE SURROUNDING STATES, INCLUDING
+
 24-HR DATA THROUGH 7 AM, SATURDAY OCTOBER 3, 2020.
+
 
  
   ILLINOIS 
@@ -97,6 +99,25 @@ FOR ILLINOIS AND THE SURROUNDING STATES, INCLUDING
     DUBUQUE AIRPORT                        55
 
 
+    WAPPAPELLO                             65
+    SIKESTON                               65
+    CAPE GIRARDEAU AIRPORT                 65
+    FESTUS                                 62
+    ST CHARLES AIRPORT                     61
+    SPIRIT OF ST LOUIS AIRPORT             61
+    CLEARWATER DAM                         61
+    ST LOUIS LAMBERT AIRPORT               60
+    FREEDOM                                60
+    WASHINGTON                             59
+    CLARKSVILLE LD 24                      59
+    STEFFENVILLE                           58
+    WARRENTON                              57
+    VANDALIA                               57
+    SHELBINA                               57
+    HANNIBAL                               57
+    BOWLING GREEN                          57
+    CANTON LD 20                           56
+
   EASTERN MISSOURI 
 
     WAPPAPELLO                             66
@@ -116,6 +137,10 @@ FOR ILLINOIS AND THE SURROUNDING STATES, INCLUDING
     BOWLING GREEN                          59
     VANDALIA                               57
 
+  WESTERN KENTUCKY 
+
+    PROVIDENCE                             65
+    PADUCAH AIRPORT                        65
 
 
   WESTERN KENTUCKY 
@@ -124,6 +149,9 @@ FOR ILLINOIS AND THE SURROUNDING STATES, INCLUDING
     PADUCAH AIRPORT                        66
     AURORA                                 66
 
+  SOUTHERN WISCONSIN 
+
+   NO MAXIMUM TEMPERATURE REPORTS WERE RECEIVED. 
 
 
   SOUTHERN WISCONSIN 

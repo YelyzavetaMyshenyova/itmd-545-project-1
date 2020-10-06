@@ -6,15 +6,12 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const io = require("socket.io")();
-//Add fs module
 const fs = require("fs");
-//Add diff module
 const diff = require("diff");
-//Add EventEmitter class
 const {EventEmitter} = require('events');
-
 const axios = require('axios');
 const cheerio = require('cheerio');
+const schedule = require('node-schedule');
 
 const indexRouter = require("./routes/index");
 const subscriptionRouter = require('./routes/subscription');
@@ -26,35 +23,10 @@ const app = express();
 var old_file = fs.readFileSync('./var/file.txt', {encoding:"utf8"});
 var fileEvent = new EventEmitter();
 
-
-//requesting html from the webpage
-axios.get('https://www.weather.gov/ilx/maxtemp')
-  .then((res) => {
-    if (res.status === 200){
-      const html = res.data;
-      //load html into cheerio
-      const $ = cheerio.load(html);
-      //loading weather infomation
-      const weatherInfo = $('pre');
-      const output = weatherInfo.html();
-      //console.log(output);
-      fs.writeFile('./var/file.txt', output, error => {
-        //In case of error throw err exception
-        if (error) throw err;
-      });
-    }
-  })
-  .catch((error) => {
-    console.log('Fail to fetch', error);
-  })
-
 //Diff testing locally
 fs.watch('./var/file.txt', function(eventType, filename){
   fs.promises.readFile(`./var/${filename}`,{encoding:"utf8"})
   .then(function(data) {
-    //console.log(`The file has this content:\n\n${data}`);
-    //console.log(data); This logs the data without string format.
-    //To be able to see it as a string representation, add "{encoding: "utf8"}" object before the callback function
     var new_file = data;
     const vapid_keys = {
         public: 'BMJ9IpyHYOZIPP4fkxbmu_rd3CD95Bw_ehAJc8KSyvR04QWU78xHOw9A0e07OYwPA4bO2SjF_BT0Z1xYViLSZbI',
@@ -91,12 +63,9 @@ fs.watch('./var/file.txt', function(eventType, filename){
 
     if (new_file !== old_file)
     {
-          console.log("Here?");
-
+      console.log("Here?");
       console.log(`The content of ${filename} has changed. It was a ${eventType} event.`);
-
       var file_changes = diff.diffLines(old_file, new_file);
-      //console.log(`Here are the changes (promise!):`);
       var new_changes = file_changes.map((change, i) => {
         if (change.added){
           return `<li class="ins">${change.value}</li>`;
@@ -112,11 +81,54 @@ fs.watch('./var/file.txt', function(eventType, filename){
   });
 });
 
-//When the `changed file` event fires, log changes locally
-fileEvent.on('changed file', function(data){
-  console.log(`The file was changed and fired an event. This are the changes:\n${data}`);
-});
-
+//a function that handles axios request for weather data
+function requestData() {
+  //requesting html from the webpage
+  axios.get('https://www.weather.gov/ilx/maxtemp')
+    .then((res) => {
+      if (res.status === 200){
+        const html = res.data;
+        //load html into cheerio
+        const $ = cheerio.load(html);
+        //loading weather infomation
+        const weatherInfo = $('pre');
+        const output = weatherInfo.html();
+        //parsing html data
+        var lines = output.split("\n").filter(line => line.length > 2);
+        var json = {};
+        var state = "";
+        json['title'] = lines.slice(0, 3).join(" ");
+        json['data'] = {};
+        lines.slice(3).forEach(line => {
+          var arr = line.split(" ").filter(word => word != '');
+          if(isNaN(arr[arr.length-1])) {
+            //state
+            state = arr.join(" ");
+            json['data'][state] = {};
+            console.log(json['data']);
+          } else {
+            //location
+            var location = arr.slice(0,arr.length-1).join(" ");
+            json['data'][state][location] = arr[arr.length-1];
+          }
+        });
+        //convert object to a json string
+        console.log("Testing here:");
+        var weatherData = JSON.stringify(json);
+        fs.writeFile('./var/weatherData.json', weatherData, (error) => {
+            if (error) throw err;
+            console.log('Data written to json file');
+        });
+        fs.writeFile('./var/file.txt', output, error => {
+          //In case of error throw err exception
+          if (error) throw err;
+        });
+      }
+    })
+    .catch((error) => {
+      console.log('Fail to fetch', error);
+    })
+}
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -138,13 +150,21 @@ io.on('connection', function(socket){
   socket.on('message received', function(data){
     console.log('Client is saying:' + data)
   })
+  //when `changed file` event fires, send changes to browser
+  fileEvent.on('changed file', function(data){
+    socket.emit('diffed changes', data);
+  });
 
+  //request weather data initially
+  requestData();
+
+  //rRequest weather data every 10 minutes
+  var scheduleTask = schedule.scheduleJob('*/10 * * * *', function(){
+    requestData();
+  });
 });
 
-//when `changed file` event fires, send changes to browser
-fileEvent.on(`changed file`, function(data){
-  io.emit('diffed changes', data);
-});
+
 
 
 // catch 404 and forward to error handler
