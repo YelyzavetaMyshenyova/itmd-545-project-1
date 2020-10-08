@@ -9,14 +9,52 @@ socket.on("message", function (data) {
   }
 });
 
+//a function that generate the grid container
+function generateGrid() {
+  var container = document.createElement("div");
+  container.setAttribute("class", "grid-container");
+  changes.appendChild(container);
+  return container;
+}
+
+//a function that generates a cell for grid container
+function generateCell(text) {
+  var item = document.createElement("div");
+  item.setAttribute("class", "grid-item");
+  var textNode = document.createTextNode(text);
+  item.appendChild(textNode);
+  return item;
+}
+
+function generateHeader(state_name) {
+  var item = document.createElement("div");
+  item.setAttribute("class", "grid-item-state");
+  var textNode = document.createTextNode(state_name);
+  item.appendChild(textNode);
+  item.style.color = "#ff9900"; 
+  return item;
+}
+
 socket.on("diffed changes", function(data) {
   console.log(`This are the diffed changes: ${data}`);
-  var parent_li = document.createElement('li');
-  parent_li.innerText = 'Latest changes:';
-  var nested_ul = document.createElement('ul');
-  nested_ul.innerHTML += data;
-  parent_li.append(nested_ul);
-  changes.append(parent_li);
+  //call function to generate the grid container
+  var container = generateGrid();
+  //parse data from backend
+  var changes = JSON.parse(data);
+  //iterate a nested object and add weather data into each cell
+  for (const [state, locations] of Object.entries(changes)) {
+    container.appendChild(generateHeader(state));
+    //generate grid header
+    container.appendChild(generateCell("Location"));
+    container.appendChild(generateCell("Temperature / °F"));
+    container.appendChild(generateCell("Temperature Differences Compared to Yesterday"));
+    for (const [location, values] of Object.entries(locations)) {
+      //generate child elements and append to parent grid container
+      container.appendChild(generateCell(location));
+      container.appendChild(generateCell(values['temp']));
+      container.appendChild(generateCell(values['diff']));
+    }
+  }
 });
 
 if ('serviceWorker' in navigator) {
